@@ -11,3 +11,9 @@ function [part] = make_xval_partition(n, n_folds)
 % of the i'th data point.
 
 % YOUR CODE GOES HERE
+
+% generate a random permutation of 1..n
+part = randperm(n);
+
+% calculate its remainder dividing by n_folds incremented by 1
+part = mod(part, n_folds) + 1;
