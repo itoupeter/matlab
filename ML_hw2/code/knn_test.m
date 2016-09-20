@@ -1,6 +1,6 @@
 function [testLabels] = knn_test(K, trainPoints, trainLabels, testPoints, distFunc)
 %KNN_TEST - Evaluates KNN predictions given training data and parameters.
-% 
+%
 %  [testLabels] = knn_test(K, trainPoints, trainLabels, testPoints, ...
 %                          [distFunc])
 %
@@ -77,5 +77,5 @@ if size(nnMat, 1) == 1 % again, if only 1, gets incorrectly converted to col vec
 end
 
 if K > 1
-    testLabels = mean(testLabels, 2);
+    testLabels = mode(testLabels, 2);
 end
