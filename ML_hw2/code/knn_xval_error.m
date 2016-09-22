@@ -37,7 +37,7 @@ for i = 1 : N
 	testLabels = knn_test(K, trainPoints, trainLabels, testPoints, distFunc);
 
 	% calculate error
-	error(i) = sum(testLabels ~= testLabelsGiven);
+	error(i) = sum(testLabels ~= testLabelsGiven) ./ size(testPoints, 1);
 end
 
 error = mean(error);
