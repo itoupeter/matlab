@@ -35,7 +35,7 @@ answers{1} = 'As number of fold increases, n-fold error goes down and at some po
 FULL_SET_SIZE = size(X, 1);
 TRAIN_SET_SIZE = 400;
 TEST_SET_SIZE = FULL_SET_SIZE - TRAIN_SET_SIZE;
-%{
+
 x = [2, 4, 8, 16];
 xLength = length(x);
 nfold_errs = zeros(100, xLength);
@@ -76,7 +76,7 @@ legend('N-Fold Error', 'Test Error');
 hold off;
 
 %% 2.2
-answers{2} = 'This is where your answer to 2.2 should go. Short and sweet is the key.';
+answers{2} = 'Best sigma and K are 13 and 7.';
 
 % Save your plots as follows:
 %
@@ -158,7 +158,7 @@ xlabel('K (# of Folds)');
 ylabel('Error');
 legend('N-Fold Error', 'Test Error');
 hold off;
-%}
+
 % Kernreg error on standard data
 x = 1 : 12;
 xLength = length(x);
