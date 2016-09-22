@@ -1,6 +1,6 @@
 function [testLabels] = kernreg_test(sigma, trainPoints, trainLabels, testPoints, distFunc)
 %KERNREG_TEST - Evaluates kernel regression/classification predictions given training data and parameters.
-% 
+%
 %  [testLabels] = kernreg_test(sigma, trainPoints, trainLabels, testPoints, ...
 %                          [distFunc])
 %
@@ -57,7 +57,7 @@ else
 end
 
 % Now we have a M x 1 x N 3-D array of distances between each pair of
-% points. We squeeze this to a M x N matrix, then use these distances to 
+% points. We squeeze this to a M x N matrix, then use these distances to
 % compute the corresponding M x N kernel matrix:
 
 distMat = squeeze(distMat);
@@ -70,4 +70,4 @@ kernMat = exp(-distMat.^2/sigma.^2);
 % Next, replicate the training label matrix to become M x N:
 trainLabels = repmat(trainLabels', numTestPoints, 1);
 % Finally, compute a weighted average over the M rows using the kernel:
-testLabels = sum(trainLabels.*kernMat,2)./sum(kernMat,2);
+testLabels = sign(sum(trainLabels.*kernMat,2));

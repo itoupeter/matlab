@@ -33,7 +33,7 @@ for i = 1 : N
 	testLabelsGiven = Y(testPointsIndices, :);
 
 	% do kernreg
-	testLabels = sign(kernreg_test(sigma, trainPoints, trainLabels, testPoints, distFunc));
+	testLabels = kernreg_test(sigma, trainPoints, trainLabels, testPoints, distFunc);
 
 	% calculate error
 	error(i) = sum(testLabels ~= testLabelsGiven) ./ size(testPoints, 1);
