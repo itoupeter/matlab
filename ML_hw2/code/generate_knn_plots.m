@@ -6,7 +6,7 @@
 load('../data/breast-cancer-data-fixed.mat');
 
 %% 2.1
-answers{1} = 'As number of fold increases, n-fold error goes down and at some point goes up. Since cross validation is only relevant to training set, test error is independent on # of fold';
+answers{1} = 'As number of fold increases, n-fold error goes down and at some point goes up. Since cross validation is only relevant to training set, test error is independent on # of fold.';
 
 % Plotting with error bars: first, arrange your data in a matrix as
 % follows:
@@ -37,11 +37,12 @@ TRAIN_SET_SIZE = 400;
 TEST_SET_SIZE = FULL_SET_SIZE - TRAIN_SET_SIZE;
 
 x = [2, 4, 8, 16];
-nfold_errs = zeros(100, 4);
-test_errs = zeros(100, 4);
+xLength = length(x);
+nfold_errs = zeros(100, xLength);
+test_errs = zeros(100, xLength);
 
 for i = 1 : 100
-	for j = 1 : 4
+	for j = 1 : xLength
 		trainPointsIndices = randperm(FULL_SET_SIZE, TRAIN_SET_SIZE);
 		testPointsIndices = setdiff(1 : FULL_SET_SIZE, trainPointsIndices);
 
@@ -63,13 +64,15 @@ y1 = mean(nfold_errs);
 e1 = std(nfold_errs);
 y2 = mean(test_errs);
 e2 = std(test_errs);
-hold on;
+
+figure(1);
 errorbar(x, y1, e1);
+hold on;
 errorbar(x, y2, e2);
 title('N-Fold Error and Test Error w.r.t # of Folds');
 xlabel('# of Folds');
 ylabel('Error');
-legend('N Fold Error', 'Test Error');
+legend('N-Fold Error', 'Test Error');
 hold off;
 
 %% 2.2
@@ -81,6 +84,83 @@ answers{2} = 'This is where your answer to 2.2 should go. Short and sweet is the
 %  noisy data, kernreg error vs. sigma --> plot_2.2-sigma-noisy.jpg
 %  regular data, k-nn error vs. K --> plot_2.2-k.jpg
 %  regular data, kernreg error vs. sigma --> plot_2.2-sigma.jpg
+x = [1, 2, 3, 5, 8, 13, 21, 34];
+xLength = length(x);
+nfold_errs = zeros(100, xLength);
+test_errs = zeros(100, xLength);
+
+% K-NN error on standard data
+for i = 1 : 100
+	for j = 1 : xLength
+		trainPointsIndices = randperm(FULL_SET_SIZE, TRAIN_SET_SIZE);
+		testPointsIndices = setdiff(1 : FULL_SET_SIZE, trainPointsIndices);
+
+		trainPoints = X(trainPointsIndices, :);
+		trainLabels = Y(trainPointsIndices, :);
+
+		testPoints = X(testPointsIndices, :);
+		testLabelsGiven = Y(testPointsIndices, :);
+
+		part = make_xval_partition(TRAIN_SET_SIZE, 10);
+		nfold_errs(i, j) = knn_xval_error(x(j), trainPoints, trainLabels, part, 'l2');
+
+		testLabels = knn_test(x(j), trainPoints, trainLabels, testPoints, 'l2');
+		test_errs(i, j) = sum(testLabels ~= testLabelsGiven) ./ TEST_SET_SIZE;
+	end
+end
+
+y1 = mean(nfold_errs);
+e1 = std(nfold_errs);
+y2 = mean(test_errs);
+e2 = std(test_errs);
+
+figure(2);
+errorbar(x, y1, e1);
+hold on;
+errorbar(x, y2, e2);
+title('K-NN N-Fold Error and Test Error on Original Data');
+xlabel('K (# of Folds)');
+ylabel('Error');
+legend('N-Fold Error', 'Test Error');
+hold off;
+
+% K-NN error on noisy data
+for i = 1 : 100
+	for j = 1 : xLength
+		trainPointsIndices = randperm(FULL_SET_SIZE, TRAIN_SET_SIZE);
+		testPointsIndices = setdiff(1 : FULL_SET_SIZE, trainPointsIndices);
+
+		trainPoints = X_noisy(trainPointsIndices, :);
+		trainLabels = Y(trainPointsIndices, :);
+
+		testPoints = X_noisy(testPointsIndices, :);
+		testLabelsGiven = Y(testPointsIndices, :);
+
+		part = make_xval_partition(TRAIN_SET_SIZE, 10);
+		nfold_errs(i, j) = knn_xval_error(x(j), trainPoints, trainLabels, part, 'l2');
+
+		testLabels = knn_test(x(j), trainPoints, trainLabels, testPoints, 'l2');
+		test_errs(i, j) = sum(testLabels ~= testLabelsGiven) ./ TEST_SET_SIZE;
+	end
+end
+
+y1 = mean(nfold_errs);
+e1 = std(nfold_errs);
+y2 = mean(test_errs);
+e2 = std(test_errs);
+
+figure(3);
+errorbar(x, y1, e1);
+hold on;
+errorbar(x, y2, e2);
+title('K-NN N-Fold Error and Test Error on Noisy Data');
+xlabel('K (# of Folds)');
+ylabel('Error');
+legend('N-Fold Error', 'Test Error');
+hold off;
+
+% Kernreg error on standard data
+
 
 %% Finishing up - make sure to run this before you submit.
 save('problem_2_answers.mat', 'answers');
