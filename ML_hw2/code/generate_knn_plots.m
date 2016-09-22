@@ -6,25 +6,25 @@
 load('../data/breast-cancer-data-fixed.mat');
 
 %% 2.1
-answers{1} = 'This is where your answer to 2.1 should go. Just as one long string in a cell array';
+answers{1} = 'As number of fold increases, n-fold error goes down and at some point goes up. Since cross validation is only relevant to training set, test error is independent on # of fold';
 
 % Plotting with error bars: first, arrange your data in a matrix as
 % follows:
 %
 %  nfold_errs(i,j) = nfold error with n=j of i'th repeat
-%  
+%
 % Then we want to plot the mean with error bars of standard deviation as
 % folows: y = mean(nfold_errs), e = std(nfold_errs), x = [2 4 8 16].
-% 
+%
 % >> errorbar(x, y, e);
 %
-% Along with nfold_errs, also plot errorbar for test error. This will 
+% Along with nfold_errs, also plot errorbar for test error. This will
 % serve as measure of performance for different nfold-crossvalidation.
 %
 % To add labels to the graph, use xlabel('X axis label') and ylabel
 % commands. To add a title, using the title('My title') command.
 % See the class Matlab tutorial wiki for more plotting help.
-% 
+%
 % Once your plot is ready, save your plot to a jpg by selecting the figure
 % window and running the command:
 %
@@ -32,6 +32,45 @@ answers{1} = 'This is where your answer to 2.1 should go. Just as one long strin
 % >> print -djpg plot_2.1.jpg  % (for regular version of data)
 %
 % YOU MUST SAVE YOUR PLOTS TO THESE EXACT FILES.
+FULL_SET_SIZE = size(X, 1);
+TRAIN_SET_SIZE = 400;
+TEST_SET_SIZE = FULL_SET_SIZE - TRAIN_SET_SIZE;
+
+x = [2, 4, 8, 16];
+nfold_errs = zeros(100, 4);
+test_errs = zeros(100, 4);
+
+for i = 1 : 100
+	for j = 1 : 4
+		trainPointsIndices = randperm(FULL_SET_SIZE, TRAIN_SET_SIZE);
+		testPointsIndices = setdiff(1 : FULL_SET_SIZE, trainPointsIndices);
+
+		trainPoints = X(trainPointsIndices, :);
+		trainLabels = Y(trainPointsIndices, :);
+
+		testPoints = X(testPointsIndices, :);
+		testLabelsGiven = Y(testPointsIndices, :);
+
+		part = make_xval_partition(TRAIN_SET_SIZE, x(j));
+		nfold_errs(i, j) = knn_xval_error(1, trainPoints, trainLabels, part, 'l2');
+
+		testLabels = knn_test(1, trainPoints, trainLabels, testPoints, 'l2');
+		test_errs(i, j) = sum(testLabels ~= testLabelsGiven) ./ TEST_SET_SIZE;
+	end
+end
+
+y1 = mean(nfold_errs);
+e1 = std(nfold_errs);
+y2 = mean(test_errs);
+e2 = std(test_errs);
+hold on;
+errorbar(x, y1, e1);
+errorbar(x, y2, e2);
+title('N-Fold Error and Test Error w.r.t # of Folds');
+xlabel('# of Folds');
+ylabel('Error');
+legend('N Fold Error', 'Test Error');
+hold off;
 
 %% 2.2
 answers{2} = 'This is where your answer to 2.2 should go. Short and sweet is the key.';
