@@ -28,7 +28,8 @@ for i = 1:size(X, 2)
 end
 
 % Recursively split data to build tree.
-root = split_node(X, Y, Xrange, mode(Y), 1:size(Xrange, 2), 0, depth_limit);
+py = sum(bsxfun(@eq, Y, 0 : max(Y)), 1) ./ numel(Y);
+root = split_node(X, Y, Xrange, py, 1:size(Xrange, 2), 0, depth_limit);
 
 function [node] = split_node(X, Y, Xrange, default_value, colidx, depth, depth_limit)
 % Utility function called recursively; returns a node structure.
@@ -54,11 +55,11 @@ if depth == depth_limit || numel(unique(Y)) <= 1 || numel(colidx) == 0
     if numel(Y) == 0
         node.value = default_value;
     else
-        node.value = mode(Y);
+        node.value = sum(bsxfun(@eq, Y, 0 : max(Y)), 1) ./ numel(Y);
     end
     node.left = []; node.right = [];
 
-    fprintf('depth %d: Leaf node: = %d\n', depth, node.value);
+	fprintf('depth %d: Leaf node: = %s\n', depth, mat2str(node.value));
     return;
 end
 
@@ -76,7 +77,7 @@ rightidx = find(X(:,node.fidx)>node.fval);
 
 % Store the value of this node in case we later wish to use this node as a
 % terminal node (i.e. pruning.)
-node.value = mode(Y);
+node.value = sum(bsxfun(@eq, Y, 0 : max(Y)), 1) ./ numel(Y);
 
 fprintf('depth %d [%d]: Split on feature %d <= %.2f w/ IG = %.2g (L/R = %d/%d)\n', ...
     depth, numel(Y), node.fidx, node.fval, max_ig, numel(leftidx), numel(rightidx));
