@@ -48,6 +48,8 @@ function [node] = split_node(X, Y, Xrange, default_value, colidx, depth, depth_l
 %    - we have Y equal to same value
 %    - we have only a single (or no) examples left
 %    - we have no features left to split on
+Z = bsxfun(@eq, Y, 0 : max(Y));
+
 if depth == depth_limit || numel(unique(Y)) <= 1 || numel(colidx) == 0
     node.terminal = true;
     node.fidx = [];
@@ -55,7 +57,7 @@ if depth == depth_limit || numel(unique(Y)) <= 1 || numel(colidx) == 0
     if numel(Y) == 0
         node.value = default_value;
     else
-        node.value = sum(bsxfun(@eq, Y, 0 : max(Y)), 1) ./ numel(Y);
+        node.value = sum(Z, 1) ./ numel(Y);
     end
     node.left = []; node.right = [];
 
@@ -65,8 +67,10 @@ end
 
 node.terminal = false;
 
+
+
 % Choose a feature to split on using information gain.
-[node.fidx node.fval max_ig] = dt_choose_feature_multi(X, Y, Xrange, colidx);
+[node.fidx node.fval max_ig] = dt_choose_feature_multi(X, Z, Xrange, colidx);
 
 % Remove this feature from future consideration.
 colidx(colidx==node.fidx) = [];
@@ -77,7 +81,7 @@ rightidx = find(X(:,node.fidx)>node.fval);
 
 % Store the value of this node in case we later wish to use this node as a
 % terminal node (i.e. pruning.)
-node.value = sum(bsxfun(@eq, Y, 0 : max(Y)), 1) ./ numel(Y);
+node.value = sum(Z, 1) ./ numel(Y);
 
 fprintf('depth %d [%d]: Split on feature %d <= %.2f w/ IG = %.2g (L/R = %d/%d)\n', ...
     depth, numel(Y), node.fidx, node.fval, max_ig, numel(leftidx), numel(rightidx));

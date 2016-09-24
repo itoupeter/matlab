@@ -31,7 +31,7 @@ split_vals = zeros(numel(Xrange), 1);
 % pre-compute expanded Z for conditional entropy computation
 ZZ = reshape(Z, [1, size(Z, 1), size(Z, 2)]);
 
-for i : colidx
+for i = colidx
 	% non-informative (single valued) feature
     if numel(Xrange{i}) == 1
         ig(i) = 0;
@@ -56,9 +56,8 @@ for i : colidx
 		y_given_notx = y_given_notx';
 	end
 
-	div = @(x, y) (x ./ y);
-	y_given_x = bsxfun(@div, y_given_x, sum(split_f, 1));
-	y_given_notx = bsxfun(@div, y_given_notx, sum(~split_f, 1));
+	y_given_x = bsxfun(@(x, y) (x ./ y), y_given_x, sum(split_f, 1));
+	y_given_notx = bsxfun(@(x, y) (x ./ y), y_given_notx, sum(~split_f, 1));
 	cond_H = px .* multi_entropy(y_given_x) ...
 			+ (1 - px) .* multi_entropy(y_given_notx);
 

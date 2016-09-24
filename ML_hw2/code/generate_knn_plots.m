@@ -32,6 +32,7 @@ answers{1} = 'As number of fold increases, n-fold error goes down and at some po
 % >> print -djpg plot_2.1.jpg  % (for regular version of data)
 %
 % YOU MUST SAVE YOUR PLOTS TO THESE EXACT FILES.
+% K-NN error on standard data
 FULL_SET_SIZE = size(X, 1);
 TRAIN_SET_SIZE = 400;
 TEST_SET_SIZE = FULL_SET_SIZE - TRAIN_SET_SIZE;
@@ -42,10 +43,9 @@ nfold_errs = zeros(100, xLength);
 test_errs = zeros(100, xLength);
 
 for i = 1 : 100
+	trainPointsIndices = randperm(FULL_SET_SIZE, TRAIN_SET_SIZE);
+	testPointsIndices = setdiff(1 : FULL_SET_SIZE, trainPointsIndices);
 	for j = 1 : xLength
-		trainPointsIndices = randperm(FULL_SET_SIZE, TRAIN_SET_SIZE);
-		testPointsIndices = setdiff(1 : FULL_SET_SIZE, trainPointsIndices);
-
 		trainPoints = X(trainPointsIndices, :);
 		trainLabels = Y(trainPointsIndices, :);
 
@@ -69,7 +69,50 @@ figure(1);
 errorbar(x, y1, e1);
 hold on;
 errorbar(x, y2, e2);
-title('N-Fold Error and Test Error w.r.t # of Folds');
+title('N-Fold and Test Error on Original Data');
+xlabel('# of Folds');
+ylabel('Error');
+legend('N-Fold Error', 'Test Error');
+hold off;
+
+% K-NN error on noisy data
+FULL_SET_SIZE = size(X_noisy, 1);
+TRAIN_SET_SIZE = 400;
+TEST_SET_SIZE = FULL_SET_SIZE - TRAIN_SET_SIZE;
+
+x = [2, 4, 8, 16];
+xLength = length(x);
+nfold_errs = zeros(100, xLength);
+test_errs = zeros(100, xLength);
+
+for i = 1 : 100
+	trainPointsIndices = randperm(FULL_SET_SIZE, TRAIN_SET_SIZE);
+	testPointsIndices = setdiff(1 : FULL_SET_SIZE, trainPointsIndices);
+	for j = 1 : xLength
+		trainPoints = X_noisy(trainPointsIndices, :);
+		trainLabels = Y(trainPointsIndices, :);
+
+		testPoints = X_noisy(testPointsIndices, :);
+		testLabelsGiven = Y(testPointsIndices, :);
+
+		part = make_xval_partition(TRAIN_SET_SIZE, x(j));
+		nfold_errs(i, j) = knn_xval_error(1, trainPoints, trainLabels, part, 'l2');
+
+		testLabels = knn_test(1, trainPoints, trainLabels, testPoints, 'l2');
+		test_errs(i, j) = sum(testLabels ~= testLabelsGiven) ./ TEST_SET_SIZE;
+	end
+end
+
+y1 = mean(nfold_errs);
+e1 = std(nfold_errs);
+y2 = mean(test_errs);
+e2 = std(test_errs);
+
+figure(2);
+errorbar(x, y1, e1);
+hold on;
+errorbar(x, y2, e2);
+title('N-Fold and Test Error on Noisy Data');
 xlabel('# of Folds');
 ylabel('Error');
 legend('N-Fold Error', 'Test Error');
@@ -91,52 +134,16 @@ test_errs = zeros(100, xLength);
 
 % K-NN error on standard data
 for i = 1 : 100
+	trainPointsIndices = randperm(FULL_SET_SIZE, TRAIN_SET_SIZE);
+	testPointsIndices = setdiff(1 : FULL_SET_SIZE, trainPointsIndices);
+	part = make_xval_partition(TRAIN_SET_SIZE, 10);
 	for j = 1 : xLength
-		trainPointsIndices = randperm(FULL_SET_SIZE, TRAIN_SET_SIZE);
-		testPointsIndices = setdiff(1 : FULL_SET_SIZE, trainPointsIndices);
-
 		trainPoints = X(trainPointsIndices, :);
 		trainLabels = Y(trainPointsIndices, :);
 
 		testPoints = X(testPointsIndices, :);
 		testLabelsGiven = Y(testPointsIndices, :);
 
-		part = make_xval_partition(TRAIN_SET_SIZE, 10);
-		nfold_errs(i, j) = knn_xval_error(x(j), trainPoints, trainLabels, part, 'l2');
-
-		testLabels = knn_test(x(j), trainPoints, trainLabels, testPoints, 'l2');
-		test_errs(i, j) = sum(testLabels ~= testLabelsGiven) ./ TEST_SET_SIZE;
-	end
-end
-
-y1 = mean(nfold_errs);
-e1 = std(nfold_errs);
-y2 = mean(test_errs);
-e2 = std(test_errs);
-
-figure(2);
-errorbar(x, y1, e1);
-hold on;
-errorbar(x, y2, e2);
-title('K-NN N-Fold Error and Test Error on Original Data');
-xlabel('K (# of Folds)');
-ylabel('Error');
-legend('N-Fold Error', 'Test Error');
-hold off;
-
-% K-NN error on noisy data
-for i = 1 : 100
-	for j = 1 : xLength
-		trainPointsIndices = randperm(FULL_SET_SIZE, TRAIN_SET_SIZE);
-		testPointsIndices = setdiff(1 : FULL_SET_SIZE, trainPointsIndices);
-
-		trainPoints = X_noisy(trainPointsIndices, :);
-		trainLabels = Y(trainPointsIndices, :);
-
-		testPoints = X_noisy(testPointsIndices, :);
-		testLabelsGiven = Y(testPointsIndices, :);
-
-		part = make_xval_partition(TRAIN_SET_SIZE, 10);
 		nfold_errs(i, j) = knn_xval_error(x(j), trainPoints, trainLabels, part, 'l2');
 
 		testLabels = knn_test(x(j), trainPoints, trainLabels, testPoints, 'l2');
@@ -153,33 +160,27 @@ figure(3);
 errorbar(x, y1, e1);
 hold on;
 errorbar(x, y2, e2);
-title('K-NN N-Fold Error and Test Error on Noisy Data');
+title('K-NN N-Fold Error and Test Error on Original Data');
 xlabel('K (# of Folds)');
 ylabel('Error');
 legend('N-Fold Error', 'Test Error');
 hold off;
 
-% Kernreg error on standard data
-x = 1 : 12;
-xLength = length(x);
-nfold_errs = zeros(100, xLength);
-test_errs = zeros(100, xLength);
-
+% K-NN error on noisy data
 for i = 1 : 100
+	trainPointsIndices = randperm(FULL_SET_SIZE, TRAIN_SET_SIZE);
+	testPointsIndices = setdiff(1 : FULL_SET_SIZE, trainPointsIndices);
+	part = make_xval_partition(TRAIN_SET_SIZE, 10);
 	for j = 1 : xLength
-		trainPointsIndices = randperm(FULL_SET_SIZE, TRAIN_SET_SIZE);
-		testPointsIndices = setdiff(1 : FULL_SET_SIZE, trainPointsIndices);
-
-		trainPoints = X(trainPointsIndices, :);
+		trainPoints = X_noisy(trainPointsIndices, :);
 		trainLabels = Y(trainPointsIndices, :);
 
-		testPoints = X(testPointsIndices, :);
+		testPoints = X_noisy(testPointsIndices, :);
 		testLabelsGiven = Y(testPointsIndices, :);
 
-		part = make_xval_partition(TRAIN_SET_SIZE, 10);
-		nfold_errs(i, j) = kernreg_xval_error(x(j), trainPoints, trainLabels, part, 'l2');
+		nfold_errs(i, j) = knn_xval_error(x(j), trainPoints, trainLabels, part, 'l2');
 
-		testLabels = kernreg_test(x(j), trainPoints, trainLabels, testPoints, 'l2');
+		testLabels = knn_test(x(j), trainPoints, trainLabels, testPoints, 'l2');
 		test_errs(i, j) = sum(testLabels ~= testLabelsGiven) ./ TEST_SET_SIZE;
 	end
 end
@@ -193,25 +194,29 @@ figure(4);
 errorbar(x, y1, e1);
 hold on;
 errorbar(x, y2, e2);
-title('Kernreg N-Fold Error and Test Error on Standard Data');
-xlabel('Sigma (Kernel Width)');
+title('K-NN N-Fold Error and Test Error on Noisy Data');
+xlabel('K (# of Folds)');
 ylabel('Error');
 legend('N-Fold Error', 'Test Error');
 hold off;
 
 % Kernreg error on standard data
-for i = 1 : 100
-	for j = 1 : xLength
-		trainPointsIndices = randperm(FULL_SET_SIZE, TRAIN_SET_SIZE);
-		testPointsIndices = setdiff(1 : FULL_SET_SIZE, trainPointsIndices);
+x = 1 : 12;
+xLength = length(x);
+nfold_errs = zeros(100, xLength);
+test_errs = zeros(100, xLength);
 
-		trainPoints = X_noisy(trainPointsIndices, :);
+for i = 1 : 100
+	trainPointsIndices = randperm(FULL_SET_SIZE, TRAIN_SET_SIZE);
+	testPointsIndices = setdiff(1 : FULL_SET_SIZE, trainPointsIndices);
+	part = make_xval_partition(TRAIN_SET_SIZE, 10);
+	for j = 1 : xLength
+		trainPoints = X(trainPointsIndices, :);
 		trainLabels = Y(trainPointsIndices, :);
 
-		testPoints = X_noisy(testPointsIndices, :);
+		testPoints = X(testPointsIndices, :);
 		testLabelsGiven = Y(testPointsIndices, :);
 
-		part = make_xval_partition(TRAIN_SET_SIZE, 10);
 		nfold_errs(i, j) = kernreg_xval_error(x(j), trainPoints, trainLabels, part, 'l2');
 
 		testLabels = kernreg_test(x(j), trainPoints, trainLabels, testPoints, 'l2');
@@ -225,6 +230,40 @@ y2 = mean(test_errs);
 e2 = std(test_errs);
 
 figure(5);
+errorbar(x, y1, e1);
+hold on;
+errorbar(x, y2, e2);
+title('Kernreg N-Fold Error and Test Error on Standard Data');
+xlabel('Sigma (Kernel Width)');
+ylabel('Error');
+legend('N-Fold Error', 'Test Error');
+hold off;
+
+% Kernreg error on standard data
+for i = 1 : 100
+	trainPointsIndices = randperm(FULL_SET_SIZE, TRAIN_SET_SIZE);
+	testPointsIndices = setdiff(1 : FULL_SET_SIZE, trainPointsIndices);
+	part = make_xval_partition(TRAIN_SET_SIZE, 10);
+	for j = 1 : xLength
+		trainPoints = X_noisy(trainPointsIndices, :);
+		trainLabels = Y(trainPointsIndices, :);
+
+		testPoints = X_noisy(testPointsIndices, :);
+		testLabelsGiven = Y(testPointsIndices, :);
+
+		nfold_errs(i, j) = kernreg_xval_error(x(j), trainPoints, trainLabels, part, 'l2');
+
+		testLabels = kernreg_test(x(j), trainPoints, trainLabels, testPoints, 'l2');
+		test_errs(i, j) = sum(testLabels ~= testLabelsGiven) ./ TEST_SET_SIZE;
+	end
+end
+
+y1 = mean(nfold_errs);
+e1 = std(nfold_errs);
+y2 = mean(test_errs);
+e2 = std(test_errs);
+
+figure(6);
 errorbar(x, y1, e1);
 hold on;
 errorbar(x, y2, e2);
