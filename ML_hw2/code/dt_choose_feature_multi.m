@@ -29,7 +29,7 @@ ig = zeros(numel(Xrange), 1);
 split_vals = zeros(numel(Xrange), 1);
 
 % pre-compute expanded Z for conditional entropy computation
-ZZ = reshape(Z, [1, size(Z, 1), size(Z, 2)]);
+ZZ = reshape(Z, [size(Z, 1), 1, size(Z, 2)]);
 
 for i = colidx
 	% non-informative (single valued) feature
