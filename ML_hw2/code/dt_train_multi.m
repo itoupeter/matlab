@@ -29,9 +29,9 @@ end
 
 % Recursively split data to build tree.
 py = sum(bsxfun(@eq, Y, 0 : max(Y)), 1) ./ numel(Y);
-root = split_node(X, Y, Xrange, py, 1:size(Xrange, 2), 0, depth_limit);
+root = split_node(X, Y, max(Y), Xrange, py, 1:size(Xrange, 2), 0, depth_limit);
 
-function [node] = split_node(X, Y, Xrange, default_value, colidx, depth, depth_limit)
+function [node] = split_node(X, Y, max_Y, Xrange, default_value, colidx, depth, depth_limit)
 % Utility function called recursively; returns a node structure.
 %
 %  [node] = split_node(X, Y, Xrange, default_value, colidx, depth, depth_limit)
@@ -48,7 +48,7 @@ function [node] = split_node(X, Y, Xrange, default_value, colidx, depth, depth_l
 %    - we have Y equal to same value
 %    - we have only a single (or no) examples left
 %    - we have no features left to split on
-Z = bsxfun(@eq, Y, 0 : max(Y));
+Z = bsxfun(@eq, Y, 1 : max_Y);
 
 if depth == depth_limit || numel(unique(Y)) <= 1 || numel(colidx) == 0
     node.terminal = true;
@@ -87,5 +87,7 @@ fprintf('depth %d [%d]: Split on feature %d <= %.2f w/ IG = %.2g (L/R = %d/%d)\n
     depth, numel(Y), node.fidx, node.fval, max_ig, numel(leftidx), numel(rightidx));
 
 % Recursively generate left and right branches.
-node.left = split_node(X(leftidx, :), Y(leftidx), Xrange, node.value, colidx, depth+1, depth_limit);
-node.right = split_node(X(rightidx, :), Y(rightidx), Xrange, node.value, colidx, depth+1, depth_limit);
+node.left = split_node(X(leftidx, :), Y(leftidx), max_Y, Xrange, ...
+		node.value, colidx, depth+1, depth_limit);
+node.right = split_node(X(rightidx, :), Y(rightidx), max_Y, Xrange, ...
+		node.value, colidx, depth+1, depth_limit);
