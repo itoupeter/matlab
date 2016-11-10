@@ -25,6 +25,16 @@ end
 %
 % P.S., if we didn't use a sparse matrix, our full X matrix would take up
 % 500 MB of memory!
+rowidx = [];
+colidx = [];
+values = [];
+
+for i = 1 : numel(data)
+    counts = data(i).counts;
+    rowidx = [rowidx; repmat(1, size(counts, 1), 1)];
+    colidx = [colidx; counts(:, 1)];
+    values = [values; counts(:, 2)];
+end
 
 X = sparse(rowidx, colidx, values, numel(data), numel(vocab));
 
