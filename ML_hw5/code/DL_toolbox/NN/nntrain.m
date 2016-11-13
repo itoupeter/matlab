@@ -7,7 +7,7 @@ function [nn, L]  = nntrain(nn, train_x, train_y, opts, val_x, val_y)
 % squared error for each training minibatch.
 
 assert(isfloat(train_x), 'train_x must be a float');
-assert(nargin == 4 || nargin == 6,'number ofinput arguments must be 4 or 6')
+assert(nargin == 4 || nargin == 6,'number of input arguments must be 4 or 6')
 
 loss.train.e               = [];
 loss.train.e_frac          = [];
@@ -36,27 +36,27 @@ L = zeros(numepochs*numbatches,1);
 n = 1;
 for i = 1 : numepochs
     tic;
-    
+
     kk = randperm(m);
     for l = 1 : numbatches
         batch_x = train_x(kk((l - 1) * batchsize + 1 : l * batchsize), :);
-        
+
         %Add noise to input (for use in denoising autoencoder)
         if(nn.inputZeroMaskedFraction ~= 0)
             batch_x = batch_x.*(rand(size(batch_x))>nn.inputZeroMaskedFraction);
         end
-        
+
         batch_y = train_y(kk((l - 1) * batchsize + 1 : l * batchsize), :);
-        
+
         nn = nnff(nn, batch_x, batch_y);
         nn = nnbp(nn);
         nn = nnapplygrads(nn);
-        
+
         L(n) = nn.L;
-        
+
         n = n + 1;
     end
-    
+
     t = toc;
 
     if opts.validation == 1
@@ -69,9 +69,8 @@ for i = 1 : numepochs
     if ishandle(fhandle)
         nnupdatefigures(nn, fhandle, loss, opts, i);
     end
-        
-    disp(['epoch ' num2str(i) '/' num2str(opts.numepochs) '. Took ' num2str(t) ' seconds' '. Mini-batch mean squared error on training set is ' num2str(mean(L((n-numbatches):(n-1)))) str_perf]);
+
+    % disp(['epoch ' num2str(i) '/' num2str(opts.numepochs) '. Took ' num2str(t) ' seconds' '. Mini-batch mean squared error on training set is ' num2str(mean(L((n-numbatches):(n-1)))) str_perf]);
     nn.learningRate = nn.learningRate * nn.scaling_learningRate;
 end
 end
-

@@ -16,12 +16,8 @@ rand('state',0)
 nn = nnsetup([784 100 10]);
 opts.numepochs =  25;   %  Number of full sweeps through data
 opts.batchsize = 100;  %  Take a mean gradient step over this many samples
-nn.dropoutFraction = 0; 
+nn.dropoutFraction = 0.21; 
 [nn, loss] = nntrain(nn, train_x, train_y, opts);
 
 [er, bad] = nntest(nn, test_x, test_y);
 disp(er);
-
-
-
-

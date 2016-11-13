@@ -16,7 +16,7 @@ test_x = normalize(test_x, mu, sigma);
 rand('state',0)
 
 nn = nnsetup([784 100 10]);
-nn.weightPenaltyL2 = 1e-2;  %  L2 weight decay
+nn.weightPenaltyL2 = 1e-3;  %  L2 weight decay
 opts.numepochs =  25;        %  Number of full sweeps through data
 opts.batchsize = 100;       %  Take a mean gradient step over this many samples
 
@@ -24,5 +24,3 @@ opts.batchsize = 100;       %  Take a mean gradient step over this many samples
 
 [er, bad] = nntest(nn, test_x, test_y);
 disp(er);
-
-
