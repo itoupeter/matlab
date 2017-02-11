@@ -2,7 +2,7 @@ function [A] = generate_hilbert(N, M)
 % This function generates Hilbert matrix of size N by M
 
 if ~exist('M')
-    M = N
+    M = N;
 end
 
 B = [1 : N]'; % [1 2 ...]'
