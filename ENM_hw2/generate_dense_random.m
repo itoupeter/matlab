@@ -1,4 +1,4 @@
-function [A] = generate_random(N, M, scale)
+function [A] = generate_dense_random(N, M, scale)
 % function that generate dense random matrix of size N by M
 
 if ~exist('M')
