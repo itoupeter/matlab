@@ -13,7 +13,7 @@ for i = 1 : N
         tic;
         % Uncomment one to time
         % res = Ludecomp(A);
-        % res = lu(A);
+        res = lu(A);
         duration = toc;
         time_cost(i) = time_cost(i) + duration;
     end

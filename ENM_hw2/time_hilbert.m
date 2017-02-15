@@ -11,8 +11,8 @@ for i = 1 : N
     for j = 1 : NUM_TRIAL
         tic;
         % Uncomment one to time
-         res = Ludecomp(A);
-        % res = lu(A);
+        % res = Ludecomp(A);
+        res = lu(A);
         duration = toc;
         time_cost(i) = time_cost(i) + duration;
     end

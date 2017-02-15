@@ -1,0 +1,30 @@
+n = 50 : 50 : 500;
+my_hilbert = time_hilbert(n);
+matlab_hilbert = time_hilbert(n);
+loglog(n, my_hilbert);
+hold on;
+loglog(n, matlab_hilbert);
+legend('My Ludecomp', 'Matlab Ludecomp');
+title('Ludecomp on Hilbert Matrix');
+xlabel('Size of Matrix');
+ylabel('Time/ms');
+
+my_dense_random = time_dense_random(n);
+matlab_dense_random = time_dense_random(n);
+loglog(n, my_dense_random);
+hold on;
+loglog(n, matlab_dense_random);
+legend('My Ludecomp', 'Matlab Ludecomp');
+title('Ludecomp on Dense Random Matrix');
+xlabel('Size of Matrix');
+ylabel('Time/ms');
+
+my_banded_random = time_banded_random(n);
+matlab_banded_random = time_banded_random(n);
+loglog(n, my_banded_random);
+hold on;
+loglog(n, matlab_banded_random);
+legend('My Ludecomp', 'Matlab Ludecomp');
+title('Ludecomp on Banded Random Matrix');
+xlabel('Size of Matrix');
+ylabel('Time/ms');
