@@ -27,10 +27,13 @@ while 1
 
     if norm(x - xx) < tol
         break;
-    elseif ite >= n
+    elseif norm(x) > 1e10
+        disp('Diverges.');
         x = zeros(n, 0);
-        break;
+        return;
     else
         xx = x;
     end
 end
+
+disp(['# of iterations: ', num2str(ite)]);
