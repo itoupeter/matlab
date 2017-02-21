@@ -1,4 +1,4 @@
-function [B] = pivot(A, k)
+function [B, P] = pivot(A, k, P)
 % Function that performs pivoting on square matrix A for the kth column.
 
 % Partial Pivoting
@@ -18,4 +18,8 @@ if maxi ~= 1
     tmp = B(k, :);
     B(k, :) = B(k + maxi - 1, :);
     B(k + maxi - 1, :) = tmp;
+
+    tmp = P(k, :);
+    P(k, :) = P(k + maxi - 1, :);
+    P(k + maxi - 1, :) = tmp;
 end
