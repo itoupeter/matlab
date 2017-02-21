@@ -1,4 +1,4 @@
-function [out, P] = ludecomp(A)
+function [L, U, P] = ludecomp(A)
 % function that decompose a square matrix A into product of two matrix L and U,
 % where L is a lower triangular matrix and U is a upper trianagular matrix.
 
@@ -20,3 +20,7 @@ for k = 1 : n - 1
         end
     end
 end
+
+U = triu(out);
+L = tril(out);
+L(logical(eye(n))) = 1;

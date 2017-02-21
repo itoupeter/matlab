@@ -3,11 +3,7 @@ function [x] = direct_solve(A, b)
 
 addpath('../ENM_hw2/');
 
-[B, P] = ludecomp(A);
-U = triu(B);
-L = tril(B);
-L(logical(eye(size(B)))) = 1;
-
+[L, U, P] = ludecomp(A);
 b = P * b;
 d = forward_sub(L, b);
 x = back_sub(U, d);
