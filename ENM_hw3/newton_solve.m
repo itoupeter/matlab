@@ -13,7 +13,7 @@ end
 
 while 1
     r = A * xx - b;
-    dx = direct_solve(A, -r); dx
+    dx = direct_solve(A, -r);
     x = xx + dx;
 
     if norm(x - xx) < tol
