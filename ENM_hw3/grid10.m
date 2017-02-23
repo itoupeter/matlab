@@ -1,5 +1,5 @@
 % generate grid points
-M = 10;
+M = 50;
 x = 0 : 1 : M - 1;
 x = x ./ (M - 1);
 x = repmat(x, M, 1);
@@ -63,3 +63,11 @@ u = direct_solve(A, b);
 u = reshape(u, M - 2, M - 2)';
 U = zeros(M);
 U(2:M - 1, 2:M - 1) = u;
+
+figure(1);
+contour(x, y, U);
+title(['Contour ', num2str(M), '-by-', num2str(M)]);
+
+figure(2);
+surf(x, y, U);
+title(['Solution ', num2str(M), '-by-', num2str(M)]);
