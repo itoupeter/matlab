@@ -59,7 +59,7 @@ for i = 2 : M - 1
     end
 end
 
-u = direct_solve(A, b);
+u = gs_solve(A, b);
 u = reshape(u, M - 2, M - 2)';
 U = zeros(M);
 U(2:M - 1, 2:M - 1) = u;
