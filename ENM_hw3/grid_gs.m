@@ -1,5 +1,5 @@
 % generate grid points
-M = 10;
+M = 30;
 x = 0 : 1 : M - 1;
 x = x ./ (M - 1);
 x = repmat(x, M, 1);
@@ -68,7 +68,7 @@ U(2:M - 1, 2:M - 1) = u;
 figure(1);
 [C, h] = contour(x, y, U);
 clabel(C, h)
-title(['Contour ', num2str(M), '-by-', num2str(M)]);
+title(['Contour ', num2str(M), '-by-', num2str(M), ' with Gauss-Seidel']);
 
 % figure(2);
 % surf(x, y, U);
