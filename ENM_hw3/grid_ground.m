@@ -1,5 +1,5 @@
 % generate grid points
-M = 100;
+M = 101;
 x = 0 : 1 : M - 1;
 x = x ./ (M - 1);
 x = repmat(x, M, 1);
