@@ -1,5 +1,5 @@
 % generate grid points
-M = 50;
+M = 10;
 x = 0 : 1 : M - 1;
 x = x ./ (M - 1);
 x = repmat(x, M, 1);
@@ -10,12 +10,13 @@ dx_2 = (M - 1) * (M - 1);
 dy_2 = (M - 1) * (M - 1);
 
 % sin(2 pi x) * cos(2 pi y)
-f = sin(2 * pi * x) .* cos(2 * pi * y);
+f = sin(2 * pi * x) .* sin(2 * pi * y);
 
 % construct matrix A and vector b in Ax=b
 % # of equations/unknowns: (M - 2) * (M - 2)
-A = zeros(M - 2, M - 2);
-b = zeros(M - 2, 1);
+n = (M - 2)^2;
+A = zeros(n, n);
+b = zeros(n, 1);
 row_id = 0;
 
 for i = 2 : M - 1
@@ -24,7 +25,7 @@ for i = 2 : M - 1
 		row_id = row_id + 1;
 
 		% RHS (b)
-		b(row_id) = f(i, j);
+		b(row_id) = -f(i, j);
 
 		% id of unknowns, 2D to 1D
 		x_id = grid_id(i - 1, j - 1, M - 2);
@@ -65,9 +66,10 @@ U = zeros(M);
 U(2:M - 1, 2:M - 1) = u;
 
 figure(1);
-contour(x, y, U);
+[C, h] = contour(x, y, U);
+clabel(C, h)
 title(['Contour ', num2str(M), '-by-', num2str(M)]);
 
-figure(2);
-surf(x, y, U);
-title(['Solution ', num2str(M), '-by-', num2str(M)]);
+% figure(2);
+% surf(x, y, U);
+% title(['Solution ', num2str(M), '-by-', num2str(M)]);
