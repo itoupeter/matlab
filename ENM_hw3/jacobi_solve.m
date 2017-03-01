@@ -9,7 +9,7 @@ if exist('x0')
     xx = x0;
 end
 
-tol = 0.001;
+tol = 1e-14;
 ite = 0;
 
 while 1

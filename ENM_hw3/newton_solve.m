@@ -5,7 +5,7 @@ n = size(A, 1);
 xx = ones(n, 1);
 x = zeros(n, 1);
 ite = 0;
-tol = 0.001;
+tol = 1e-14;
 
 if exist('x0')
     xx = x0;
