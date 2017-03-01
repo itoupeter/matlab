@@ -1,7 +1,7 @@
 
-% grid_direct;
+grid_direct;
 % grid_gs;
-grid_jacobi;
+% grid_jacobi;
 % grid_newton;
 
 step = 100 / (M - 1);
