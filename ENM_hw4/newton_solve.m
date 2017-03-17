@@ -13,7 +13,9 @@ end
 
 while 1
     r = A * UU + lambda * (UU .* (1 + UU));
-    J = A + (1 + 2 * lambda) * diag(UU); 
+    J = A + diag(lambda * (1 + 2 * UU)); 
+    %r = A * UU + lambda * UU;
+    %J = A + lambda * eye(n);
     dU = -J \ r;
     U = UU + dU;
 

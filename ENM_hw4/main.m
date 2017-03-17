@@ -55,7 +55,7 @@ U = reshape(u(2:N - 1, 2:N - 1)', [], 1);
 
 % paramter to do AC on (lambda in this case)
 lambda = (m.^2 + n.^2) * pi.^2;
-delta_lambda = 0.01;
+delta_lambda = 0.1;
 
 % dR_dU * dU_dLambda = -dR_dLambda
 % solve for dU_dLambda
@@ -66,7 +66,7 @@ dU_dLambda = -dR_dU \ dR_dLambda;
 U0 = U + dU_dLambda * delta_lambda;
 
 % use Newton to converge to solution
-Uf = newton_solve(A, lambda, U);
+Uf = newton_solve(A, lambda + delta_lambda, U);
 Uff = zeros(N, N);
 Uff(2:N - 1, 2:N - 1) = reshape(Uf, N - 2, N - 2)';
 surf(x, y, Uff);
