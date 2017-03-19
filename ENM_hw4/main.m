@@ -48,7 +48,7 @@ end
 % linear problem solution
 n = 1;
 m = 2;
-Anm = 1;
+Anm = -1;
 u = Anm .* sin(m * pi * x) .* sin(n * pi * y);
 U = reshape(u(2:N - 1, 2:N - 1)', [], 1);
 lambda = (m.^2 + n.^2) * pi.^2;
@@ -58,7 +58,7 @@ U = newton_solve(A, lambda, U);
 %plot_solution(U, x, y, N);
 
 % advance paramter to do AC (lambda in this case)
-delta_lambda = 0.05;
+delta_lambda = 0.015;
 
 Unorms = [];
 lambdas = lambda : delta_lambda : 60;
@@ -74,7 +74,6 @@ for next_lambda = lambdas
     % use Newton to converge to solution
     U = newton_solve(A, next_lambda, U0);
     Unorms = [Unorms norm(U, 2)];
-    %plot_solution(U, x, y, N);
 end
 
 plot(lambdas, Unorms, 'rx');

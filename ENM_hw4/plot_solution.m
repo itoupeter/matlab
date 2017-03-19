@@ -4,7 +4,12 @@ function [ dummy ] = plot_solution(U, x, y, N)
 
 Uf = zeros(N, N);
 Uf(2:N - 1, 2:N - 1) = reshape(U, N - 2, N - 2)';
+
+figure(1);
 surf(x, y, Uf);
 
-end
+figure(2);
+[C, h] = contour(x, y, Uf);
+clabel(C, h);
 
+end
