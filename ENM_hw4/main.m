@@ -47,7 +47,7 @@ end
 
 % linear problem solution
 n = 1;
-m = 1;
+m = 2;
 Anm = 1;
 u = Anm .* sin(m * pi * x) .* sin(n * pi * y);
 U = reshape(u(2:N - 1, 2:N - 1)', [], 1);
@@ -55,23 +55,26 @@ lambda = (m.^2 + n.^2) * pi.^2;
 
 % use linear solution to jump on non-linear solution branch
 U = newton_solve(A, lambda, U);
+%plot_solution(U, x, y, N);
 
 % advance paramter to do AC (lambda in this case)
-delta_lambda = -0.1;
+delta_lambda = 0.05;
 
-for next_lambda = lambda : delta_lambda : 1
+Unorms = [];
+lambdas = lambda : delta_lambda : 60;
+for next_lambda = lambdas
     % dR_dU * dU_dLambda = -dR_dLambda
     % solve for dU_dLambda
     % U_k+1 = U_k + dU_dLambda * delta_lambda to get initial guess
-    dR_dU = A + diag(lambda * (1 + 2 * U));
+    dR_dU = A + diag(next_lambda * (1 + 2 * U));
     dR_dLambda = U .* (1 + U);
     dU_dLambda = -dR_dU \ dR_dLambda;
     U0 = U + dU_dLambda * delta_lambda;
-    
-    
+
+    % use Newton to converge to solution
+    U = newton_solve(A, next_lambda, U0);
+    Unorms = [Unorms norm(U, 2)];
+    %plot_solution(U, x, y, N);
 end
 
-% use Newton to converge to solution
-Uff = zeros(N, N);
-Uff(2:N - 1, 2:N - 1) = reshape(Uf, N - 2, N - 2)';
-surf(x, y, Uff);
+plot(lambdas, Unorms, 'rx');

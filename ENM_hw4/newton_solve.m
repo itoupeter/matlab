@@ -5,7 +5,7 @@ n = size(A, 1);
 UU = ones(n, 1);
 U = zeros(n, 1);
 ite = 0;
-tol = 1e-14;
+tol = 1e-8;
 
 if exist('U0', 'var')
     UU = U0;
@@ -19,7 +19,7 @@ while 1
     dU = -J \ r;
     U = UU + dU;
 
-    if norm(U - UU) < tol
+    if norm(U - UU, 1) < tol
         break;
     elseif norm(U) > 1e10
         disp('Diverges.');
