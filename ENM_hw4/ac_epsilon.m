@@ -12,7 +12,7 @@ A = zeros(M, M);
 sinpix = sin(pi * x);
 sinpix = reshape(sinpix(2:N - 1, 2:N - 1)', [], 1);
 
-lambda = 20;
+lambda = 55;
 epsilon = 0;
 
 h_2 = (N - 1) * (N - 1);
@@ -70,7 +70,6 @@ for next_epsilon = epsilons
     U0 = U + dU_dEpsilon * delta_epsilon;
 
     % use Newton to converge to solution
-    U = newton_solve(A, lambda, next_epsilon, U0, sinpix);
+    U = newton_solve(A, lambda, next_epsilon, U0);
     plot_solution(U, x, y, N);
 end
-

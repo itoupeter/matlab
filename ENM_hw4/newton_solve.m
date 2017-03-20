@@ -11,14 +11,18 @@ if exist('U0', 'var')
     UU = U0;
 end
 
+if ~exist('sinpix', 'var')
+    sinpix = zeros(n, 1);
+end
+
 while 1
     % AC on epsilon
-    r = A * UU + lambda * (UU .* (1 + UU)) - epsilon * sinpix;
-    J = A + diag(lambda * (1 + 2 * UU));
+    %r = A * UU + lambda * (UU .* (1 + UU)) - epsilon * sinpix;
+    %J = A + diag(lambda * (1 + 2 * UU));
     
     % AC on lambda
-    %r = A * UU + lambda * (UU .* (1 + UU));
-    %J = A + diag(lambda * (1 + 2 * UU));
+    r = A * UU + lambda * (UU .* (1 + UU)) - epsilon * sinpix;
+    J = A + diag(lambda * (1 + 2 * UU));
     
     % linearized
     %r = A * UU + lambda * UU;

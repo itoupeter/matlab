@@ -8,6 +8,13 @@ y = x';
 % construct matrix A (FD of the Laplacian)
 M = (N - 2) * (N - 2); % M unknowns
 A = zeros(M, M);
+
+sinpix = sin(pi * x);
+sinpix = reshape(sinpix(2:N - 1, 2:N - 1)', [], 1);
+
+lambda = 20;
+epsilon = 2;
+
 h_2 = (N - 1) * (N - 1);
 row_id = 0;
 
@@ -45,20 +52,13 @@ for i = 2 : N - 1
     end
 end
 
-% linear problem solution
-n = 1;
-m = 2;
-Anm = -1;
-u = Anm .* sin(m * pi * x) .* sin(n * pi * y);
-U = reshape(u(2:N - 1, 2:N - 1)', [], 1);
-lambda = (m.^2 + n.^2) * pi.^2;
-
-% use linear solution to jump on non-linear solution branch
-U = newton_solve(A, lambda, 0, U);
+% use solution to epsilon = 0, lambda = 20 to jump on to epsilon = 2 solution branch
+load data.mat U2_20;
+U = U2_20;
 %plot_solution(U, x, y, N);
 
 % advance paramter to do AC (lambda in this case)
-delta_lambda = 0.015;
+delta_lambda = 0.1;
 
 Unorms = [];
 lambdas = lambda : delta_lambda : 60;
@@ -71,9 +71,11 @@ for next_lambda = lambdas
     dU_dLambda = -dR_dU \ dR_dLambda;
     U0 = U + dU_dLambda * delta_lambda;
 
-    % use Newton to converge to solution
-    U = newton_solve(A, next_lambda, 0, U0);
+    % use Newton to converge to solutionon_solve(A
+    U = newt, next_lambda, epsilon, U0, sinpix);
     Unorms = [Unorms norm(U, 2)];
+    %plot_solution(U, x, y, N);
+    %pause(0.2);
 end
 
 plot(lambdas, Unorms, 'rx');
