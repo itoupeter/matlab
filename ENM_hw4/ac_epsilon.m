@@ -52,14 +52,15 @@ for i = 2 : N - 1
 end
 
 % use epsilon = 0 problem solution to jump on epsilon = 2 solution branch
-load data.mat U_20;
-U = U_20;
-plot_solution(U, x, y, N);
+load data.mat U_lambda55_epsilon0_bowl U_lambda55_epsilon0_hill;
+U = U_lambda55_epsilon0_hill;
+%plot_solution(U, x, y, N);
 
 % advance paramter to do AC (epsilon in this case)
 delta_epsilon = 0.1;
 
 epsilons = epsilon : delta_epsilon : 2;
+Unorms = [];
 for next_epsilon = epsilons
     % dR_dU * dU_dEpsilon = -dR_dEpsilon
     % solve for dU_dEpsilon
@@ -71,5 +72,9 @@ for next_epsilon = epsilons
 
     % use Newton to converge to solution
     U = newton_solve(A, lambda, next_epsilon, U0);
-    plot_solution(U, x, y, N);
+    %plot_solution(U, x, y, N);
+    %pause(0.2);
+    Unorms = [Unorms norm(U, 2)];
 end
+
+plot(epsilons, Unorms);

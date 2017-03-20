@@ -16,17 +16,14 @@ if ~exist('sinpix', 'var')
 end
 
 while 1
-    % AC on epsilon
-    %r = A * UU + lambda * (UU .* (1 + UU)) - epsilon * sinpix;
-    %J = A + diag(lambda * (1 + 2 * UU));
-    
-    % AC on lambda
+    % non-linear
     r = A * UU + lambda * (UU .* (1 + UU)) - epsilon * sinpix;
     J = A + diag(lambda * (1 + 2 * UU));
     
     % linearized
     %r = A * UU + lambda * UU;
     %J = A + lambda * eye(n);
+    
     dU = -J \ r;
     U = UU + dU;
 

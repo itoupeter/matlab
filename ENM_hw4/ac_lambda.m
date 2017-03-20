@@ -12,7 +12,7 @@ A = zeros(M, M);
 sinpix = sin(pi * x);
 sinpix = reshape(sinpix(2:N - 1, 2:N - 1)', [], 1);
 
-lambda = 20;
+lambda = 55;
 epsilon = 2;
 
 h_2 = (N - 1) * (N - 1);
@@ -52,10 +52,9 @@ for i = 2 : N - 1
     end
 end
 
-% use solution to epsilon = 0, lambda = 20 to jump on to epsilon = 2 solution branch
-load data.mat U2_20;
-U = U2_20;
-%plot_solution(U, x, y, N);
+% intial
+load data.mat U_lambda55_epsilon2_hill U_lambda55_epsilon2_bowl;
+U = U_lambda55_epsilon2_bowl;
 
 % advance paramter to do AC (lambda in this case)
 delta_lambda = 0.1;
@@ -72,10 +71,10 @@ for next_lambda = lambdas
     U0 = U + dU_dLambda * delta_lambda;
 
     % use Newton to converge to solutionon_solve(A
-    U = newt, next_lambda, epsilon, U0, sinpix);
+    U = newton_solve(A, next_lambda, epsilon, U0);
     Unorms = [Unorms norm(U, 2)];
     %plot_solution(U, x, y, N);
-    %pause(0.2);
+    %pause(0.1);
 end
 
 plot(lambdas, Unorms, 'rx');
