@@ -1,4 +1,4 @@
-function [U] = newton_solve(A, lambda, U0)
+function [U] = newton_solve(A, lambda, epsilon, U0, sinpix)
 % function: solve for U in AU + lambda*U*(1+U)=0 using Newton's method.
 
 n = size(A, 1);
@@ -12,8 +12,15 @@ if exist('U0', 'var')
 end
 
 while 1
-    r = A * UU + lambda * (UU .* (1 + UU));
+    % AC on epsilon
+    r = A * UU + lambda * (UU .* (1 + UU)) - epsilon * sinpix;
     J = A + diag(lambda * (1 + 2 * UU));
+    
+    % AC on lambda
+    %r = A * UU + lambda * (UU .* (1 + UU));
+    %J = A + diag(lambda * (1 + 2 * UU));
+    
+    % linearized
     %r = A * UU + lambda * UU;
     %J = A + lambda * eye(n);
     dU = -J \ r;

@@ -54,7 +54,7 @@ U = reshape(u(2:N - 1, 2:N - 1)', [], 1);
 lambda = (m.^2 + n.^2) * pi.^2;
 
 % use linear solution to jump on non-linear solution branch
-U = newton_solve(A, lambda, U);
+U = newton_solve(A, lambda, 0, U);
 %plot_solution(U, x, y, N);
 
 % advance paramter to do AC (lambda in this case)
@@ -72,7 +72,7 @@ for next_lambda = lambdas
     U0 = U + dU_dLambda * delta_lambda;
 
     % use Newton to converge to solution
-    U = newton_solve(A, next_lambda, U0);
+    U = newton_solve(A, next_lambda, 0, U0);
     Unorms = [Unorms norm(U, 2)];
 end
 
