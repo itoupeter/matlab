@@ -62,7 +62,7 @@ lambda = (m.^2 + n.^2) * pi.^2;
 delta_lambda = -0.1;
 
 Unorms = [];
-lambdas = lambda : delta_lambda : 2;
+lambdas = lambda : delta_lambda : 12;
 for old_lambda = lambdas
     % dR_dU * dU_dLambda = -dR_dLambda
     % solve for dU_dLambda
@@ -74,11 +74,17 @@ for old_lambda = lambdas
 
     % use Newton to converge to solutionon_solve(A
     U = newton_solve(A, old_lambda + delta_lambda, epsilon, U0);
-%     plot_solution(U, x, y, N); zlim([0 1]);
+%     plot_solution(U, x, y, N);
 %     pause(0.2);
     
     % save solution norm for plotting
     Unorms = [Unorms norm(U, 2)];
+    
+    if old_lambda < 13
+        1;
+    elseif old_lambda < 18
+        1;
+    end
 end
 
 plot(lambdas, Unorms, 'rx');
