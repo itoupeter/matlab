@@ -12,7 +12,7 @@ A = eye(M, M);
 sinpix = sin(pi * x);
 sinpix = reshape(sinpix', [], 1);
 
-epsilon = 0;
+epsilon = 2;
 
 h_2 = (N - 1) * (N - 1);
 
@@ -51,18 +51,23 @@ for i = 2 : N - 1
 end
 
 % linear problem solution
-n = 1;
-m = 1;
-Anm = 1;
-u = Anm .* sin(m * pi * x) .* sin(n * pi * y);
-U = reshape(u', [], 1);
+% n = 1;
+% m = 1;
+% Anm = -1;
+% u = Anm .* sin(m * pi * x) .* sin(n * pi * y);
+% U = reshape(u', [], 1);
+
+% load solution
+load b.mat u_l15_e2_b1_hill u_l25_e2_b1_bowl u_l50_e2_b2_hill u_l50_e2_b2_bowl;
+U = u_l15_e2_b1_hill;
 
 % advance paramter to do AC (lambda in this case)
-lambda = (m.^2 + n.^2) * pi.^2;
+% lambda = (m.^2 + n.^2) * pi.^2;
+lambda = 15;
 delta_lambda = -0.1;
 
 Unorms = [];
-lambdas = lambda : delta_lambda : 12;
+lambdas = lambda : delta_lambda : 9;
 for old_lambda = lambdas
     % dR_dU * dU_dLambda = -dR_dLambda
     % solve for dU_dLambda
@@ -79,12 +84,6 @@ for old_lambda = lambdas
     
     % save solution norm for plotting
     Unorms = [Unorms norm(U, 2)];
-    
-    if old_lambda < 13
-        1;
-    elseif old_lambda < 18
-        1;
-    end
 end
 
 plot(lambdas, Unorms, 'rx');
