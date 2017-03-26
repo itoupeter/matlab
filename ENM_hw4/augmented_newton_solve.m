@@ -1,37 +1,34 @@
-function [U] = augmented_newton_solve(A, J, lambda, epsilon, U0, sinpix)
-% function: solve for U in AU + lambda*U*(1+U)=0 using Newton's method.
+function [U, lambda] = augmented_newton_solve(A, J, epsilon, sinpix, delta_s, U1, U2, lambda1, lambda2)
+% function: solve for U and lambda given intial guess.
 
-n = size(A, 1);
-UU = ones(n, 1);
-U = zeros(n, 1);
+M = size(J, 1);
+U = U2;
+lambda = lambda2;
 ite = 0;
-tol = 1e-8;
-
-if exist('U0', 'var')
-    UU = U0;
-end
-
-if ~exist('sinpix', 'var')
-    sinpix = zeros(n, 1);
-end
+tol = 1e-10;
 
 while 1
     % non-linear
-    r = A * UU + lambda * (UU .* (1 + UU)) - epsilon * sinpix;
+    r = A * U2 + lambda2 * (U2 .* (1 + U2)) - epsilon * sinpix;
+    eta = delta_s^2 - norm(U2 - U1, 2) - (lambda2 - lambda1)^2;
+    R = [r; eta];
     
-    dU_dLambda = -J \ r;
-    dU = dU_dLambda(1:n - 1, 1);
-    dLambda = dU_dLambda(n
-    U = UU + dU;
+    dU_dLambda = -J \ R;
+    dU = dU_dLambda(1:M - 1, 1);
+    dLambda = dU_dLambda(M, 1);
+    U = U2 + dU;
+    lambda = lambda2 + dLambda;
 
-    if norm(U - UU, 1) < tol
+    if norm(dU, 1) + norm(dLambda, 1) < tol
         break;
-    elseif norm(U) > 1e10
+    elseif norm(U) > 1e10 || abs(lambda) > 1e10
         disp('Diverges.');
-        U = zeros(n, 1);
+        U = zeros(M - 1, 1);
+        lambda = 0;
         return;
     else
-        UU = U;
+        U2 = U;
+        lambda2 = lambda;
     end
 
     ite = ite + 1;
