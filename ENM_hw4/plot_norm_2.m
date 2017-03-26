@@ -10,5 +10,8 @@ plot(norm_b2_bowl_x, -norm_b2_bowl_y, 'bx'); % branch 2 bowl
 title('Norm of Solution v.s. Lambda (Epsilon = 2)');
 legend('branch 1', 'branch 2', 'location', 'northeast');
 xlabel('Lambda');
-ylabel('Norm');
+ylabel('L2 Norm');
 hold off;
+
+xlim([0 60]);
+ylim([-20 20]);

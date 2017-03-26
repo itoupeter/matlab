@@ -10,3 +10,6 @@ legend('branch 1', 'branch 2', 'location', 'northeast');
 xlabel('Lambda');
 ylabel('L2 Norm');
 hold off;
+
+xlim([0 60]);
+ylim([-20 20]);

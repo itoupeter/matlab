@@ -6,4 +6,5 @@ function [id] = grid_id(i, j, N)
 % 0 3 4 0
 % 0 0 0 0
 
-id = (i - 1) * N + j;
+% id = (i - 1) * N + j;
+id = (i - 2) * (N - 2) + j - 1;

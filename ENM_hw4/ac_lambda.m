@@ -6,11 +6,11 @@ x = repmat(x, N, 1);
 y = x';
 
 % construct matrix A (FD of the Laplacian)
-M = N * N; % M unknowns
-A = eye(M, M);
+M = (N - 2) * (N - 2); % M unknowns
+A = zeros(M, M);
 
 sinpix = sin(pi * x);
-sinpix = reshape(sinpix', [], 1);
+sinpix = reshape(sinpix(2:N-1, 2:N-1)', [], 1);
 
 h_2 = (N - 1) * (N - 1);
 
@@ -23,25 +23,25 @@ for i = 2 : N - 1
         A(id, id) = -4 * h_2;
 
         % east
-        if j + 1 <= N
+        if j + 1 < N
             eid = grid_id(i, j + 1, N);
             A(id, eid) = h_2;
         end
 
         % west
-        if j - 1 >= 1
+        if j - 1 > 1
             wid = grid_id(i, j - 1, N);
             A(id, wid) = h_2;
         end
 
         % north
-        if i - 1 >= 1
+        if i - 1 > 1
             nid = grid_id(i - 1, j, N);
             A(id, nid) = h_2;
         end
 
         % south
-        if i + 1 <= N
+        if i + 1 < N
             sid = grid_id(i + 1, j, N);
             A(id, sid) = h_2;
         end
@@ -50,10 +50,11 @@ end
 
 % linear problem solution
 % n = 1;
-% m = 1;
+% m = 2;
 % Anm = -1;
 % u = Anm .* sin(m * pi * x) .* sin(n * pi * y);
-% U = reshape(u', [], 1);
+% U = reshape(u(2:N-1, 2:N-1)', [], 1);
+% plot_solution(U, x, y, N);
 
 % load solution
 load b.mat u_l15_e2_b1_hill u_l25_e2_b1_bowl u_l50_e2_b2_hill u_l50_e2_b2_bowl;
@@ -79,7 +80,7 @@ for old_lambda = lambdas
     % use Newton to converge to solutionon_solve(A
     U = newton_solve(A, old_lambda + delta_lambda, epsilon, U0, sinpix);
 %     plot_solution(U, x, y, N);
-%     pause(0.2);
+%     pause(0.1);
     
     % save solution norm for plotting
     Unorms = [Unorms norm(U, 2)];

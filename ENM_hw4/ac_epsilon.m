@@ -6,11 +6,11 @@ x = repmat(x, N, 1);
 y = x';
 
 % construct matrix A (FD of the Laplacian)
-M = N * N; % M unknowns
+M = (N - 2) * (N - 2); % M unknowns
 A = zeros(M, M);
 
 sinpix = sin(pi * x);
-sinpix = reshape(sinpix', [], 1);
+sinpix = reshape(sinpix(2:N-1, 2:N-1)', [], 1);
 
 h_2 = (N - 1) * (N - 1);
 
@@ -23,25 +23,25 @@ for i = 2 : N - 1
         A(id, id) = -4 * h_2;
 
         % east
-        if j + 1 <= N
+        if j + 1 < N
             eid = grid_id(i, j + 1, N);
             A(id, eid) = h_2;
         end
 
         % west
-        if j - 1 >= 1
+        if j - 1 > 1
             wid = grid_id(i, j - 1, N);
             A(id, wid) = h_2;
         end
 
         % north
-        if i - 1 >= 1
+        if i - 1 > 1
             nid = grid_id(i - 1, j, N);
             A(id, nid) = h_2;
         end
 
         % south
-        if i + 1 <= N
+        if i + 1 < N
             sid = grid_id(i + 1, j, N);
             A(id, sid) = h_2;
         end
