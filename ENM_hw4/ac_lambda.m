@@ -59,6 +59,7 @@ end
 % load solution
 load b.mat u_l15_e2_b1_hill u_l25_e2_b1_bowl u_l50_e2_b2_hill u_l50_e2_b2_bowl;
 U = u_l50_e2_b2_bowl;
+plot_solution(U, x, y, N);
 
 % advance paramter to do AC (lambda in this case)
 % lambda = (m.^2 + n.^2) * pi.^2;
@@ -86,4 +87,4 @@ for old_lambda = lambdas
     Unorms = [Unorms norm(U, 2)];
 end
 
-plot(lambdas, Unorms, 'rx');
+% plot(lambdas, Unorms, 'rx');
