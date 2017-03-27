@@ -50,12 +50,12 @@ end
 
 % parameters
 epsilon = 2;
-lambda0 = 50;
-lambda1 = 50.5;
+lambda0 = 25;
+lambda1 = 25.5;
 
 % load initial solutions U0
 load b.mat u_l15_e2_b1_hill u_l25_e2_b1_bowl u_l50_e2_b2_hill u_l50_e2_b2_bowl;
-U0 = u_l50_e2_b2_bowl;
+U0 = u_l25_e2_b1_bowl;
 plot_solution(U0, x, y, N);
 
 % do AC on lambda and calculate U1
@@ -71,7 +71,7 @@ delta_s = (norm(U1 - U0, 2) + norm(lambda1 - lambda0, 2))^0.5;
 
 Unorms = [norm(U0, 2) norm(U1, 2)];
 lambdas = [lambda0 lambda1];
-while lambda1 < 60
+while lambda1 < 50
     % Jacobi
     dR_dU = A + diag(lambda1 * (1 + 2 * U1));
     dR_dLambda = U1 .* (1 + U1);
@@ -108,4 +108,5 @@ while lambda1 < 60
     lambda1 = lambda2;
 end
 
-plot(lambdas, Unorms, 'rx');
+plot_solution(U1, x, y, N);
+% plot(lambdas, Unorms, 'rx');

@@ -57,17 +57,18 @@ end
 % plot_solution(U, x, y, N);
 
 % load solution
-load b.mat u_l15_e2_b1_hill u_l25_e2_b1_bowl u_l50_e2_b2_hill u_l50_e2_b2_bowl;
-U = u_l50_e2_b2_bowl;
+load b.mat u_l15_e0_b1_hill u_l25_e0_b1_bowl u_l50_e0_b2_hill u_l50_e0_b2_bowl;
+U = u_l50_e0_b2_bowl;
 plot_solution(U, x, y, N);
 
 % advance paramter to do AC (lambda in this case)
 % lambda = (m.^2 + n.^2) * pi.^2;
-epsilon = 2;
+epsilon = 0;
 lambda = 50;
 delta_lambda = 0.1;
 
 Unorms = [];
+ACnorms = [];
 lambdas = lambda : delta_lambda : 60;
 for old_lambda = lambdas
     % dR_dU * dU_dLambda = -dR_dLambda
@@ -80,11 +81,15 @@ for old_lambda = lambdas
 
     % use Newton to converge to solutionon_solve(A
     U = newton_solve(A, old_lambda + delta_lambda, epsilon, U0, sinpix);
+    if norm(U, 1) == 0
+        break;
+    end
 %     plot_solution(U, x, y, N);
 %     pause(0.1);
     
     % save solution norm for plotting
+    ACnorms = [ACnorms norm(U0, 2)];
     Unorms = [Unorms norm(U, 2)];
 end
 
-% plot(lambdas, Unorms, 'rx');
+plot(lambdas, ACnorms, 'rx'); 
