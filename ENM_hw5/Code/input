@@ -1,0 +1,27 @@
+ 30, 30
+ 10, 1.d-10
+ 1.d0, 1.d0, 0.d0
+ 1.d0, 1.d0, 1.d0, 1.d0
+
+
+
+DESCRIPTION OF Variables
+
+LINE 1 - NXEL, NYEL   - Number of elements in X, Y
+LINE 2 - NITER, ERROR - Max # of iterations, max tol. for L2 norm of update
+LINE 3 - C1, C2, C3   - Constants for General Use 
+LINE 4 - AXIS, BXIS   - Lengths of domain in X,Y
+LINE 4 - XFACT, YFACT - Grid scales in X, Y (geometric scaling)
+
+OTHER VARIABLES IN THE CODE
+
+NNX,NNY     - # of nodes in X,Y
+NODTOL      - total # of nodes
+NNTOL       - total # of elements
+IBAND       - Jacobian matrix bandwidth
+
+
+
+
+
+

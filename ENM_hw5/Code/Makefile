@@ -1,0 +1,1 @@
+F77 = 	f77FFLAGS =FILES.f = FEM.f BAND.fFILES.o=        $(FILES.f:.f=.o) fem.x:	${FILES.o}	${F77} ${FILES.o} ${FFLAGS} -o fem.xclean:  	rm -f *.o fem.x sol output field.plt

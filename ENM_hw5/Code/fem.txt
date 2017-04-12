@@ -1,0 +1,178 @@
+[1]	Purpose
+
+	The FEM program solves LAPLACE'S equation on a square domain
+	using the finite element method.
+	The set of algebraic residual equations is formed using
+	GALERKIN's method.
+	Linear basis functions are used to approximate the unknowns.
+	The produced residuals are nonlinear. Therefore, NEWTON's method
+	is employed to find the solution iteratively.
+	At each iteration the correction vector for the solution
+	is found by GAUSSIAN elimination of the matrix equation J.  =R.
+
+[2]	Global variables definitions
+
+	NXEL Number of elements in the x direction.
+
+	NYEL Number of elements in the y direction.
+
+	NNX Number of nodes in the x direction (NNX=NXEL+1).
+
+	NNY Number of nodes in the y direction (NNY=NYEL+1).
+
+	NNTOL Total number of elements (NNTOL=NXEL*NYEL).
+
+	NODTOL Total number of nodes (NODTOL=NNX*NNY).
+
+	NM(4) Node numbers of element i.
+
+	IBAND Band width of the jacobian matrix.
+
+	NUC Number of upper columns in the jacobian matrix.
+
+	NLC Number of lower columns in the jacobian matrix.
+
+	NRHS Number of right hand sides.
+
+	AXIS Length of the X axis.
+
+	BXIS Length of the Y axis.
+
+	XFACT Grading coeffecient of elements in the X direction.
+
+	YFACT Grading coeffecient of elements in the Y direction.
+
+	NINT1 Number of GAUSSIAN integration points.
+
+	GAPT(NINT1) Values of the integration points.
+
+	WO(NINT1) Weighting functions used in GAUSSIAN integration.
+
+	BFN(4,NINT1*NINT1) Bilinear basis functions evaluated at the
+	integration points.
+
+	DBFC(4,NINT1*NINT1) Dervatives of basis functions in transformed
+	coordinates (C,E) with respect to C coordinate.
+
+	DBFE(4,NINT1*NINT1) Dervatives of basis functions in transformed
+	coordinates (C,E) with respect to E coordinate.
+
+	DPDX(4) Dervatives of basis functions in (X,Y) coordinates
+	with respect to X coordinate.
+
+	DPDY(4) Dervatives of basis functions in (X,Y) coordinates
+	with respect to Y coordinate.
+
+	XX The value of X evaluated at the integration point.
+
+	YY The value of Y evaluated at the integration point.
+
+	AJAC Jacobian of transformation from C,E to X,Y coordinates.
+
+	TF(2,NINT1) Linear basis functions used for line integrals.
+
+	DTF(2,NINT1) Dervatives of TF(2,NINT1).
+
+	A(NODTOL,IBAND) Matrix A contains derviatives of the residuals
+	with respect to the dependent variable T(NODTOL). Matrix A is
+	a banded matrix; its order is NODTOL and band width is IBAND.
+
+	B(NODTOL,NRHS) Residuals vector of length NODTOL.
+
+	T(NODTOL) Solution vector of length NODTOL.
+
+	X(NODTOL) X coordinate mesh points vector of length NODTOL.
+
+	Y(NODTOL) Y coordinate mesh points vector of length NODTOL.
+
+	DET Determinant of the jacobian matrix.
+
+	NITER Total number of iterations for NEWTON method.
+
+	ERROR Convergence criteria for NEWTONS iterations.
+
+	C1,...C10 Parameters used in the governing equations
+	and boundary conditions.
+
+[3]	Routines and local variables definitions.
+
+	1-CP(The control program)
+
+	Function: CP is the control program that handles input output data,
+	calls to other FEM routines. The program can be divided as
+	follows:
+
+	(1) Open input/output data files.
+	(2) Read and write input parameters and initial guess.
+	(3) Initialize domain and line basis functions.
+	(4) Calculate the mesh points.
+	(5) Form the jacobian matrix and the residuals vector.
+	(6) Solve the matrix equation, update solution, and check convergence.
+	(7) Write output results.
+
+	2-SUBROUTINE DOMI
+
+	The subroutine DOMI integrates the governing equations using the
+	Guassian integration method. Integration is made on a local scale
+	from one element to another. Element integration matrices are
+	then restored in the global Jacobian matrix A and residuals vector B.
+
+	Local variables :
+
+	TEMP(4,4) Working area used to store element integrals
+	for the Jacobian matrix.
+
+	TEMP1(4) Working area used to store element integrals
+	for the residuals equations.
+
+	3-SUBROUTINE BOUND
+
+	Subroutine bound inserts boundary conditions contribution in
+	the Jacobian matrix A and the residuals vector B. Insertion
+	is carried seperately on each boundary. Also, insertion is made
+	first on elements scale then is stored in the global matrices.
+
+	Local variables :
+
+	P(2,2) Working area used to store boundary line integrals
+	for the Jacobian matrix.
+
+	R(2) Working area used to store boundary line integrals
+	for the residuals vector.
+
+	N(2) Node numbers of the boundary segments.
+
+	4-SUBROUTINE MESH
+
+	Subroutine MESH calculate the mehs points at each node. The
+	subroutine is also designed to pack the elements in one direction
+	through varying the variables XFACT and YFACT.
+
+	5-SUBROUTINE NNUM(I,J)
+
+	Subroutine nnum finds the node number of node I,J
+
+	6-SUBROUTINE BASIS(ITYPE,IG,C,E)
+
+	Local variables definitions:
+	ITYPE This variable has to values
+	1) on initialization of basis functions and derivatives
+	   in transformed coordinates it should have the value of 1.
+	   These derivatives are used repeatedly by the integration
+	   procedure without updating as long as the integration
+	   points remains constant.
+
+	2) In this case the subroutine evaluates the dervatives
+	   of the basis functions evaluated in the X and Y coordinates.
+	   Also it evaluates the jacobian of transformation, the values
+	   of X and Y coordinates at the integration points in element i.
+
+	IG Specifies the number of the Gaussian integration point
+
+	C,E Values of the integration points in transformed coordinates.
+
+	7-SUBROUTINE BAND
+
+	Banded matrix solver (same as BANSOL).
+
+
