@@ -1,7 +1,7 @@
 
 % define element 
-N = 30;
-x = (0 : N) / N;
+N = 50;
+x = (0 : N)' / N;
 h = 1 / N;
 
 % convection-diffusion reaction parameters
@@ -10,60 +10,90 @@ D = 1;
 k = 1;
 
 % integration terms
-A = {@(x) v * -0.25 * (1 - x), @(x) v * 0.25 * (1 - x);
-    @(x) v * -0.25 * (1 + x), @(x) v * 0.25 * (1 + x)};
+A = {@(x) v * -0.25 * (1 - x) + D * 0.5 / h, ...
+    @(x) v * 0.25 * (1 - x) + D * -0.5 / h;
+    @(x) v * -0.25 * (1 + x) + D * -0.5 / h, ...
+    @(x) v * 0.25 * (1 + x) + D * 0.5 / h};
 
-B = {@(x) D * 0.5 / h, @(x) D * -0.5 / h;
-    @(x) D * -0.5 / h, @(x) D * 0.5 / h};
+B = {@(x) k * (1 - x)^3 / 16 * h, ...
+    @(x) k * (1 - x) * (1 + x)^2 / 16 * h;
+    @(x) k * (1 - x)^2 * (1 + x) / 16 * h, ...
+    @(x) k * (1 + x)^3 / 16 * h};
 
-C = {@(x) k * (1 - x)^3 * 0.5 / h, ...
-    @(x) k * (1 - x) * (1 + x)^2 * 0.5 / h;
-    @(x) k * (1 - x)^2 * (1 + x) * 0.5 / h, ...
-    @(x) k * (1 + x)^3 * 0.5 / h};
+C = {@(x) k * (1 - x)^2 * (1 + x) / 16 * h, ...
+    @(x) k * (1 - x)^2 * (1 + x) / 16 * h;
+    @(x) k * (1 - x) * (1 + x)^2 / 16 * h, ...
+    @(x) k * (1 - x) * (1 + x)^2 / 16 * h};
 
-D = {@(x) k * (1 - x)^2 * (1 + x) * 0.25 / h, ...
-    @(x) k * (1 - x)^2 * (1 + x) * 0.25 / h;
-    @(x) k * (1 - x) * (1 + x)^2 * 0.25 / h, ...
-    @(x) k * (1 - x) * (1 + x)^2 * 0.25 / h};
+AA = zeros(2, 2);
+BB = zeros(2, 2);
+CC = zeros(2, 2);
+
+for i = 1 : 2
+    for j = 1 : 2
+        AA(i, j) = gqi(A{i, j});
+        BB(i, j) = gqi(B{i, j});
+        CC(i, j) = gqi(C{i, j});
+    end
+end
 
 % equation
-J = zeros(N, N);
-c = ones(N, 1) * 0.5;
-R = zeros(N, 1);
+J = zeros(N + 1, N + 1);
+c = ones(N + 1, 1) * 1;
+R = zeros(N + 1, 1);
 
-for e = 1 : N
-    % local-to-global index mapping
-    idx_global = @(x) x + e - 2;
+delta_c = ones(N);
+num_ites = 0;
+
+while norm(delta_c, 1) > 1e-4
+    num_ites = num_ites + 1;
     
-    J_tmp = zeros(2, 2);
-    R_tmp = zeros(2, 1);
-    
-    for i = 1 : 2
-        for j = 1 : 2
-            j_global = idx_global(j);
-            m_global = idx_global(3 - j);
-            
-            if j_global == 0
-                cj = 1;
-            else
-                cj = c(j_global);
+    % J, R
+    for e = 1 : N
+        % local-to-global index mapping
+        idx_global = @(x) x + e - 1;
+
+        % construct J and R locally
+        J_tmp = zeros(2, 2);
+        R_tmp = zeros(2, 1);
+
+        for i = 1 : 2
+            for j = 1 : 2
+                j_global = idx_global(j);
+                m_global = idx_global(3 - j);
+
+                J_tmp(j, i) = AA(i, j) ...
+                    + 2 * c(j_global) * BB(i, j) ...
+                    + c(m_global) * CC(i, j);
+
+                R_tmp(j) = R_tmp(j) + c(j_global) * AA(i, j) + ...
+                    c(j_global)^2 * BB(i, j) ...
+                    + c(j_global) * c(m_global) * CC(i, j);
             end
-            
-            if m_global == 0
-                cm = 1;
-            else
-                cm = c(m_global);
-            end
-            
-            J_tmp(i, j) = gqi(A{i, j}) + gqi(B{i, j}) ...
-                + cj * gqi(C{i, j})...
-                + cm * gqi(D{i, j});
         end
+
+        % construct global J and R
+        J(e:e + 1, e:e + 1) = J(e:e + 1, e:e + 1) + J_tmp;
+        R(e:e + 1, :) = R(e:e + 1, :) + R_tmp;
     end
     
-    J(e:e + 1, e:e + 1) = J_tmp;
+    % impose Dirichlet boundary condition
+    J(1, 1:2) = [1, 0];
+    R(1) = c(1) - 1;
     
-    for i = 1 : 2
-        
+    delta_c = -J \ R;
+    c = c + delta_c;
+    plot(x, c);
+    pause(0.5);
+    
+    if norm(c, 1) > 1e10
+        c = c * 0;
+        break;
     end
+end
+
+if norm(c, 1) == 0
+    disp('Diverged.')
+else
+    disp(['Converged. #iterations: ', num2str(num_ites)]);
 end
