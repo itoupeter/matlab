@@ -1,6 +1,6 @@
 
 % define element 
-N = 100;
+N = 5;
 x = (0 : N)' / N;
 h = 1 / N;
 
@@ -97,3 +97,5 @@ if norm(c, 1) == 0
 else
     disp(['Converged. #iterations: ', num2str(num_ites)]);
 end
+
+plot(x, c);
