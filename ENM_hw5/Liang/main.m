@@ -1,6 +1,6 @@
 
 % define element 
-N = 50;
+N = 4;
 x = (0 : N)' / N;
 h = 1 / N;
 
@@ -39,7 +39,7 @@ end
 
 % equation
 J = zeros(N + 1, N + 1);
-c = ones(N + 1, 1) * 1;
+c = ones(N + 1, 1) * 0.5;
 R = zeros(N + 1, 1);
 
 delta_c = ones(N);
@@ -62,11 +62,11 @@ while norm(delta_c, 1) > 1e-4
                 j_global = idx_global(j);
                 m_global = idx_global(3 - j);
 
-                J_tmp(j, i) = AA(i, j) ...
+                J_tmp(i, j) = AA(i, j) ...
                     + 2 * c(j_global) * BB(i, j) ...
                     + c(m_global) * CC(i, j);
 
-                R_tmp(j) = R_tmp(j) + c(j_global) * AA(i, j) + ...
+                R_tmp(i) = R_tmp(i) + c(j_global) * AA(i, j) + ...
                     c(j_global)^2 * BB(i, j) ...
                     + c(j_global) * c(m_global) * CC(i, j);
             end
@@ -84,7 +84,7 @@ while norm(delta_c, 1) > 1e-4
     delta_c = -J \ R;
     c = c + delta_c;
     plot(x, c);
-    pause(0.5);
+    pause(0.2);
     
     if norm(c, 1) > 1e10
         c = c * 0;
