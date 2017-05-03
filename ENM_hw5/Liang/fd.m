@@ -1,7 +1,7 @@
 % finite difference method
 
 % define grid
-N = 500;
+N = 10;
 x = (0:N) / N;
 h = 1 / N;
 
@@ -12,28 +12,30 @@ k = 1;
 
 % set up equations
 A = zeros(N + 1, N + 1);
-c = ones(N + 1, 1) * 0.5;
+c = ones(N + 1, 1);
+% load a.mat c20; c = c20;
 delta_c = ones(N + 1, 1);
 
 for i = 2 : N
-    A(i, i + 1) = v / 2 / h;
-    A(i, i - 1) = -D / h / h;
+    A(i, i + 1) = v / 2 / h - D / h / h;
+    A(i, i - 1) = -(v / 2 / h + D / h / h);
     A(i, i) = 2 * D / h / h;
 end
 
-A(N + 1, N) = D / h / h;
-A(N + 1, N + 1) = -D / h / h;
+% Neumann BC
+A(N + 1, N) = -2 * D / h / h;
+A(N + 1, N + 1) = 2 * D / h / h;
 
 num_ites = 0;
 
-while norm(delta_c, 1) > 1e-8
+while norm(delta_c, 1) > 1e-6
     num_ites = num_ites + 1;
     
     % Jacobian and Residual
     R = A * c + k * c .* c;
-    J = A + diag(2 * c);
+    J = A + diag(2 * k * c);
     
-    % Dirichlet BC
+    % fixed BC
     J(1, 1) = 1;
     R(1) = c(1) - 1;
     
@@ -41,7 +43,7 @@ while norm(delta_c, 1) > 1e-8
     delta_c = -J \ R;
     c = c + delta_c;
     plot(x, c);
-    pause(0.2);
+    pause(2);
     
     if norm(c, 1) > 1e10
         c = c * 0;
