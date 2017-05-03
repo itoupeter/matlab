@@ -3,34 +3,42 @@ load a.mat;
 err = [];
 
 N = 5;
-step = 100 / N;
-x = (1:N) / N;
-idx = 1 : step : 101;
-c_bar = c100(idx);
-err = [err norm(c5 - c_bar, 2) / 6];
+step = 200 / N;
+idx = 1 : step : 201;
+c_bar = c200(idx);
+err = [err norm(c5 - c_bar, 1) / 6];
 
 N = 10;
-step = 100 / N;
-x = (1:N) / N;
-idx = 1 : step : 101;
-c_bar = c100(idx);
-err = [err norm(c10 - c_bar, 2) / 11];
+step = 200 / N;
+idx = 1 : step : 201;
+c_bar = c200(idx);
+err = [err norm(c10 - c_bar, 1) / 11];
 
 N = 20;
-step = 100 / N;
-x = (1:N) / N;
-idx = 1 : step : 101;
-c_bar = c100(idx);
-err = [err norm(c20 - c_bar, 2) / 21];
+step = 200 / N;
+idx = 1 : step : 201;
+c_bar = c200(idx);
+err = [err norm(c20 - c_bar, 1) / 21];
+
+N = 40;
+step = 200 / N;
+idx = 1 : step : 201;
+c_bar = c200(idx);
+err = [err norm(c40 - c_bar, 1) / 41];
 
 N = 50;
-step = 100 / N;
-x = (1:N) / N;
-idx = 1 : step : 101;
-c_bar = c100(idx);
-err = [err norm(c50 - c_bar, 2) / 51];
+step = 200 / N;
+idx = 1 : step : 201;
+c_bar = c200(idx);
+err = [err norm(c50 - c_bar, 1) / 51];
 
-n = [5, 10, 20, 50];
+N = 100;
+step = 200 / N;
+idx = 1 : step : 201;
+c_bar = c200(idx);
+err = [err norm(c100 - c_bar, 1) / 101];
+
+n = [5, 10, 20, 40, 50, 100];
 loglog(n, err); hold on;
 
 P = polyfit(log(n), log(err), 1);

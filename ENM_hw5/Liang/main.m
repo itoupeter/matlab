@@ -1,7 +1,7 @@
 % finite element method
 
 % define element 
-N = 50;
+N = 100;
 x = (0 : N)' / N;
 h = 1 / N;
 
@@ -46,7 +46,7 @@ R = zeros(N + 1, 1);
 delta_c = ones(N, 1);
 num_ites = 0;
 
-while norm(delta_c, 1) > 1e-4
+while norm(delta_c, 1) > 1e-2
     num_ites = num_ites + 1;
     
     % J, R
@@ -99,4 +99,4 @@ else
     disp(['Converged. #iterations: ', num2str(num_ites)]);
 end
 
-% plot(x, c);
+plot(x, c); beep;

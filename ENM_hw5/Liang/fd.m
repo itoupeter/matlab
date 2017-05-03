@@ -1,7 +1,7 @@
 % finite difference method
 
 % define grid
-N = 10;
+N = 100;
 x = (0:N) / N;
 h = 1 / N;
 
@@ -13,7 +13,6 @@ k = 1;
 % set up equations
 A = zeros(N + 1, N + 1);
 c = ones(N + 1, 1);
-% load a.mat c20; c = c20;
 delta_c = ones(N + 1, 1);
 
 for i = 2 : N
@@ -42,8 +41,6 @@ while norm(delta_c, 1) > 1e-6
     % update c
     delta_c = -J \ R;
     c = c + delta_c;
-    plot(x, c);
-    pause(2);
     
     if norm(c, 1) > 1e10
         c = c * 0;
@@ -57,4 +54,4 @@ else
     disp(['Converged. #iterations: ', num2str(num_ites)]);
 end
 
-% plot(x, c);
+plot(x, c);
